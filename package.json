@@ -1,0 +1,32 @@
+{
+  "name": "automated-project-judging-service",
+  "version": "1.0.0",
+  "description": "A production-ready REST API for automated project evaluation and judging.",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js"
+  },
+  "dependencies": {
+    "@fastify/swagger": "^8.15.0",
+    "@fastify/swagger-ui": "^3.1.0",
+    "dotenv": "^16.4.5",
+    "fastify": "^4.27.0",
+    "fastify-plugin": "^4.5.1",
+    "pg": "^8.11.5"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "keywords": [
+    "fastify",
+    "postgresql",
+    "api",
+    "judging",
+    "evaluation"
+  ],
+  "license": "MIT"
+}
