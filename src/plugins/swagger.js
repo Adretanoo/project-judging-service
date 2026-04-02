@@ -144,6 +144,18 @@ async function swaggerPlugin(fastify) {
         { name: 'Scores', description: 'Submit and query scores' },
         { name: 'Leaderboard', description: 'Ranked project results' },
       ],
+      components: {
+        securitySchemes: {
+          bearerAuth: {
+            type: 'http',
+            scheme: 'bearer',
+            bearerFormat: 'JWT'
+          }
+        }
+      },
+      security: [
+        { bearerAuth: [] }
+      ]
     },
   });
 

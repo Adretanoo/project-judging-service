@@ -2,23 +2,23 @@
 
 const service = require('./project.service');
 
-/**
- * HTTP layer for projects.
- */
+class ProjectController {
+  async getProjects(request, reply) {
+    const projects = await service.getProjects();
+    reply.send(projects);
+  }
 
-async function createProject(request, reply) {
-  const project = await service.createProject(request.body);
-  reply.status(201).send(project);
+  async getProject(request, reply) {
+    const project = await service.getProject(request.params.id);
+    reply.send(project);
+  }
+
+  async createProject(request, reply) {
+    // author_id comes from JWT token! No need to pass it in the body.
+    const author_id = request.user.id; 
+    const project = await service.createProject(request.body, author_id);
+    reply.status(201).send(project);
+  }
 }
 
-async function getAllProjects(request, reply) {
-  const projects = await service.getAllProjects();
-  reply.send(projects);
-}
-
-async function getProjectById(request, reply) {
-  const project = await service.getProjectById(parseInt(request.params.id, 10));
-  reply.send(project);
-}
-
-module.exports = { createProject, getAllProjects, getProjectById };
+module.exports = new ProjectController();

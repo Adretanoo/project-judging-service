@@ -16,4 +16,9 @@ async function getAllCriteria(request, reply) {
   reply.send(criteria);
 }
 
-module.exports = { createCriteria, getAllCriteria };
+async function getCriteriaById(request, reply) {
+  const criteria = await service.getCriteriaById(request.params.id);
+  reply.send(criteria);
+}
+
+module.exports = { createCriteria, getAllCriteria, getCriteriaById };

@@ -1,14 +1,23 @@
 import axios from 'axios'
 
-/**
- * Axios instance that targets Vite's dev proxy (/api → http://localhost:3000).
- * All exports correspond 1-to-1 with backend endpoints.
- */
 const api = axios.create({
   baseURL: '/api',
   headers: { 'Content-Type': 'application/json' },
   timeout: 10_000,
 })
+
+// Set up Interceptor
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem('token')
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`
+  }
+  return config
+})
+
+// ── Auth ─────────────────────────────────────────────────────────────────────
+export const login    = (data) => api.post('/auth/login', data)
+export const register = (data) => api.post('/auth/register', data)
 
 // ── Judges ───────────────────────────────────────────────────────────────────
 export const getJudges     = ()     => api.get('/judges')
@@ -21,12 +30,12 @@ export const getProjectById = (id)   => api.get(`/projects/${id}`)
 export const createProject  = (data) => api.post('/projects', data)
 
 // ── Criteria ─────────────────────────────────────────────────────────────────
-export const getCriteria   = ()     => api.get('/criteria')
+export const getCriteria    = ()     => api.get('/criteria')
 export const createCriteria = (data) => api.post('/criteria', data)
 
 // ── Scores ───────────────────────────────────────────────────────────────────
-export const createScore         = (data) => api.post('/scores', data)
-export const getScoresByProject  = (id)   => api.get(`/scores/project/${id}`)
+export const createScore        = (data) => api.post('/scores', data)
+export const getScoresByProject = (id)   => api.get(`/scores/project/${id}`)
 
 // ── Leaderboard ──────────────────────────────────────────────────────────────
 export const getLeaderboard = () => api.get('/leaderboard')

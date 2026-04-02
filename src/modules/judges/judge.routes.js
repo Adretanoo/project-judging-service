@@ -1,61 +1,79 @@
 'use strict';
 
-const controller = require('./judge.controller');
-
-/**
- * Fastify route definitions for the /judges prefix.
- * Each route includes a full OpenAPI schema for Swagger documentation.
- */
 async function judgeRoutes(fastify) {
-  // POST /judges — Create a new judge
+  // 1. Basic Welcome Route (as requested)
   fastify.route({
-    method:  'POST',
-    url:     '/',
+    method: 'GET',
+    url: '/',
     schema: {
-      tags:        ['Judges'],
-      summary:     'Create a new judge',
-      description: 'Registers a new judge in the system.',
-      body: { $ref: 'JudgeInput#' },
-      response: {
-        201: { $ref: 'Judge#' },
-        400: { $ref: 'ErrorResponse#' },
-      },
+      tags: ['Judges'],
+      summary: 'Welcome route',
     },
-    handler: controller.createJudge,
+    handler: async (request, reply) => {
+      return { message: 'Welcome to the Judging Service' };
+    },
   });
 
-  // GET /judges — List all judges
+  // 2. Get all judges placeholder
   fastify.route({
-    method:  'GET',
-    url:     '/',
+    method: 'GET',
+    url: '/list',
+    preValidation: [fastify.authenticate],
     schema: {
-      tags:     ['Judges'],
-      summary:  'List all judges',
+      tags: ['Judges'],
+      summary: 'Get all judges',
+      security: [{ bearerAuth: [] }],
       response: {
-        200: { type: 'array', items: { $ref: 'Judge#' } },
+        200: { type: 'object' },
       },
     },
-    handler: controller.getAllJudges,
+    handler: async (request, reply) => {
+      return { success: true, route: 'GET /judges/list' };
+    },
   });
 
-  // GET /judges/:id — Get a single judge
+  // 3. Get judge by ID placeholder
   fastify.route({
-    method:  'GET',
-    url:     '/:id',
+    method: 'GET',
+    url: '/:id',
+    preValidation: [fastify.authenticate],
     schema: {
-      tags:    ['Judges'],
-      summary: 'Get a judge by ID',
+      tags: ['Judges'],
+      summary: 'Get judge by ID',
+      security: [{ bearerAuth: [] }],
       params: {
         type: 'object',
-        properties: { id: { type: 'integer' } },
         required: ['id'],
+        properties: { id: { type: 'integer' } },
       },
       response: {
-        200: { $ref: 'Judge#' },
+        200: { type: 'object' },
         404: { $ref: 'ErrorResponse#' },
       },
     },
-    handler: controller.getJudgeById,
+    handler: async (request, reply) => {
+      return { success: true, route: `GET /judges/${request.params.id}` };
+    },
+  });
+
+  // 4. Create judge placeholder
+  fastify.route({
+    method: 'POST',
+    url: '/',
+    preValidation: [fastify.requireAdmin],
+    schema: {
+      tags: ['Judges'],
+      summary: 'Register a new judge (Admin only)',
+      security: [{ bearerAuth: [] }],
+      body: { $ref: 'JudgeInput#' },
+      response: {
+        201: { type: 'object' },
+        409: { $ref: 'ErrorResponse#' },
+      },
+    },
+    handler: async (request, reply) => {
+      return { success: true, route: 'POST /judges' };
+    },
   });
 }
 

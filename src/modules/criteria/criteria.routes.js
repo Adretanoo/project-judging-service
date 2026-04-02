@@ -2,39 +2,58 @@
 
 const controller = require('./criteria.controller');
 
-/**
- * Fastify route definitions for the /criteria prefix.
- */
 async function criteriaRoutes(fastify) {
-  // POST /criteria — Create a new criterion
   fastify.route({
-    method:  'POST',
-    url:     '/',
+    method: 'GET',
+    url: '/',
+    // Open for all authenticated users to see criteria
+    preValidation: [fastify.authenticate],
     schema: {
-      tags:        ['Criteria'],
-      summary:     'Create a new evaluation criterion',
-      description: 'Adds a criterion (e.g. "Innovation") with a weight and max score.',
-      body: { $ref: 'CriteriaInput#' },
-      response: {
-        201: { $ref: 'Criteria#' },
-        400: { $ref: 'ErrorResponse#' },
-      },
-    },
-    handler: controller.createCriteria,
-  });
-
-  // GET /criteria — List all criteria
-  fastify.route({
-    method:  'GET',
-    url:     '/',
-    schema: {
-      tags:     ['Criteria'],
-      summary:  'List all criteria',
+      tags: ['Criteria'],
+      summary: 'Get all evaluation criteria',
+      security: [{ bearerAuth: [] }],
       response: {
         200: { type: 'array', items: { $ref: 'Criteria#' } },
       },
     },
     handler: controller.getAllCriteria,
+  });
+
+  fastify.route({
+    method: 'GET',
+    url: '/:id',
+    preValidation: [fastify.authenticate],
+    schema: {
+      tags: ['Criteria'],
+      summary: 'Get criteria by ID',
+      security: [{ bearerAuth: [] }],
+      params: {
+        type: 'object',
+        required: ['id'],
+        properties: { id: { type: 'integer' } },
+      },
+      response: {
+        200: { $ref: 'Criteria#' },
+        404: { $ref: 'ErrorResponse#' },
+      },
+    },
+    handler: controller.getCriteriaById,
+  });
+
+  fastify.route({
+    method: 'POST',
+    url: '/',
+    preValidation: [fastify.requireAdmin], // Admin only!
+    schema: {
+      tags: ['Criteria'],
+      summary: 'Create new criteria (Admin only)',
+      security: [{ bearerAuth: [] }],
+      body: { $ref: 'CriteriaInput#' },
+      response: {
+        201: { $ref: 'Criteria#' },
+      },
+    },
+    handler: controller.createCriteria,
   });
 }
 

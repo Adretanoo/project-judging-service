@@ -2,26 +2,24 @@
 
 const repo = require('./project.repository');
 
-/**
- * Business logic for projects.
- */
-
-async function createProject(data) {
-  return repo.createProject(data);
-}
-
-async function getAllProjects() {
-  return repo.getAllProjects();
-}
-
-async function getProjectById(id) {
-  const project = await repo.getProjectById(id);
-  if (!project) {
-    const err = new Error(`Project with id ${id} not found`);
-    err.statusCode = 404;
-    throw err;
+class ProjectService {
+  async getProjects() {
+    return repo.findAll();
   }
-  return project;
+
+  async getProject(id) {
+    const project = await repo.findById(id);
+    if (!project) {
+      const err = new Error('Project not found');
+      err.statusCode = 404;
+      throw err;
+    }
+    return project;
+  }
+
+  async createProject(data, author_id) {
+    return repo.create({ ...data, author_id });
+  }
 }
 
-module.exports = { createProject, getAllProjects, getProjectById };
+module.exports = new ProjectService();

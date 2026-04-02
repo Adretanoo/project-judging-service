@@ -24,4 +24,14 @@ async function getAllCriteria() {
   return repo.getAllCriteria();
 }
 
-module.exports = { createCriteria, getAllCriteria };
+async function getCriteriaById(id) {
+  const item = await repo.getCriteriaById(id);
+  if (!item) {
+    const err = new Error('Criteria not found');
+    err.statusCode = 404;
+    throw err;
+  }
+  return item;
+}
+
+module.exports = { createCriteria, getAllCriteria, getCriteriaById };
