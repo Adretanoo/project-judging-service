@@ -54,6 +54,51 @@ async function projectRoutes(fastify) {
     },
     handler: controller.createProject,
   });
+
+  fastify.route({
+    method: 'PUT',
+    url: '/:id',
+    preValidation: [fastify.authenticate], // Both author and admin can use this (service layer validates specific author matching)
+    schema: {
+      tags: ['Projects'],
+      summary: 'Update project (Author only)',
+      security: [{ bearerAuth: [] }],
+      params: {
+        type: 'object',
+        required: ['id'],
+        properties: { id: { type: 'integer' } },
+      },
+      body: { $ref: 'ProjectInput#' },
+      response: {
+        200: { $ref: 'Project#' },
+        403: { $ref: 'ErrorResponse#' },
+        404: { $ref: 'ErrorResponse#' },
+      },
+    },
+    handler: controller.updateProject,
+  });
+
+  fastify.route({
+    method: 'DELETE',
+    url: '/:id',
+    preValidation: [fastify.authenticate], // Handled by service layer mapping
+    schema: {
+      tags: ['Projects'],
+      summary: 'Delete project (Author only)',
+      security: [{ bearerAuth: [] }],
+      params: {
+        type: 'object',
+        required: ['id'],
+        properties: { id: { type: 'integer' } },
+      },
+      response: {
+        204: { type: 'null' },
+        403: { $ref: 'ErrorResponse#' },
+        404: { $ref: 'ErrorResponse#' },
+      },
+    },
+    handler: controller.deleteProject,
+  });
 }
 
 module.exports = projectRoutes;

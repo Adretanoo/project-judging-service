@@ -23,6 +23,13 @@ export default function ScoreSubmissionPage() {
   const [saving, setSaving]     = useState(false)
 
   useEffect(() => {
+    // Read project_id from URL if coming from Judge list
+    const params = new URLSearchParams(window.location.search)
+    const pid = params.get('project_id')
+    if (pid) {
+      setForm(f => ({ ...f, project_id: pid }))
+    }
+
     Promise.all([
       user.role === 'admin' ? api.getJudges() : Promise.resolve({data: []}), 
       api.getProjects(), 

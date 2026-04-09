@@ -13,6 +13,7 @@ import JudgesPage          from './pages/JudgesPage'
 import CriteriaPage        from './pages/CriteriaPage'
 import ScoreSubmissionPage from './pages/ScoreSubmissionPage'
 import LeaderboardPage     from './pages/LeaderboardPage'
+import JudgeProjectsList   from './pages/JudgeProjectsList'
 
 // Protected Route wrapper checking authentication and arbitrary role array
 function RequireAuth({ children, roles }) {
@@ -55,6 +56,9 @@ function AppRoutes() {
         } />
 
         {/* Role: Judge (and Admin explicitly acting as judge) */}
+        <Route path="evaluate" element={
+          <RequireAuth roles={['judge', 'admin']}><JudgeProjectsList /></RequireAuth>
+        } />
         <Route path="scores/submit" element={
           <RequireAuth roles={['judge', 'admin']}><ScoreSubmissionPage /></RequireAuth>
         } />

@@ -19,6 +19,16 @@ class ProjectController {
     const project = await service.createProject(request.body, author_id);
     reply.status(201).send(project);
   }
+
+  async updateProject(request, reply) {
+    const project = await service.updateProject(request.params.id, request.body, request.user);
+    reply.send(project);
+  }
+
+  async deleteProject(request, reply) {
+    await service.deleteProject(request.params.id, request.user);
+    reply.status(204).send();
+  }
 }
 
 module.exports = new ProjectController();
